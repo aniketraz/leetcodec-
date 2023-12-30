@@ -1,31 +1,34 @@
+//tow pointer methed. 
+
 class Solution {
- public:
-  double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
-    const int n1 = nums1.size();
-    const int n2 = nums2.size();
-    if (n1 > n2)
-      return findMedianSortedArrays(nums2, nums1);
+public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        int n = nums1.size();
+        int m = nums2.size();
+        int i = 0, j = 0, m1 = 0, m2 = 0;
 
-    int l = 0;
-    int r = n1;
+        // Find median.
+        for (int count = 0; count <= (n + m) / 2; count++) {
+            m2 = m1;
+            if (i != n && j != m) {
+                if (nums1[i] > nums2[j]) {
+                    m1 = nums2[j++];
+                } else {
+                    m1 = nums1[i++];
+                }
+            } else if (i < n) {
+                m1 = nums1[i++];
+            } else {
+                m1 = nums2[j++];
+            }
+        }
 
-    while (l <= r) {
-      const int partition1 = (l + r) / 2;
-      const int partition2 = (n1 + n2 + 1) / 2 - partition1;
-      const int maxLeft1 = partition1 == 0 ? INT_MIN : nums1[partition1 - 1];
-      const int maxLeft2 = partition2 == 0 ? INT_MIN : nums2[partition2 - 1];
-      const int minRight1 = partition1 == n1 ? INT_MAX : nums1[partition1];
-      const int minRight2 = partition2 == n2 ? INT_MAX : nums2[partition2];
-      if (maxLeft1 <= minRight2 && maxLeft2 <= minRight1)
-        return (n1 + n2) % 2 == 0
-                   ? (max(maxLeft1, maxLeft2) + min(minRight1, minRight2)) * 0.5
-                   : max(maxLeft1, maxLeft2);
-      else if (maxLeft1 > minRight2)
-        r = partition1 - 1;
-      else
-        l = partition1 + 1;
+        // Check if the sum of n and m is odd.
+        if ((n + m) % 2 == 1) {
+            return static_cast<double>(m1);
+        } else {
+            double ans = static_cast<double>(m1) + static_cast<double>(m2);
+            return ans / 2.0;
+        }
     }
-
-    throw;
-  }
 };
